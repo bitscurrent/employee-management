@@ -80,7 +80,7 @@ const loginUser = async (req: Request, res: Response) => {
     // Check if user exists in the database
     pool;
     const userData = await pool.query(
-      "SELECT username, password, email  FROM users WHERE username = $1",
+      "SELECT username, password  FROM users WHERE username = $1",
       [username]
     );
     if (userData.rows.length === 0) {
@@ -104,7 +104,7 @@ const loginUser = async (req: Request, res: Response) => {
 
     // If everything is correct, return the user details
     res.status(200).json({
-      message: `Hello, your email is ${user.email} and your username is ${user.username}`,
+      message: `username is ${user.username}`,
     });
   } catch (error) {
     console.error("Error logging in:", error); // Log the error for debugging
