@@ -10,9 +10,11 @@ app.use(cookieParser());
 
 // Routes import
 import userRouter from "./routers/user.router";
+import employeeRouter from "./routers/employee.router";
 
 // routes declaration
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/employees", employeeRouter);
 
 // http://localhost:8000/api/v1/users/register
 export { app };
