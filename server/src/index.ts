@@ -11,7 +11,7 @@ connectDB();
 
 // Testing
 app.get("/test", (req: Request, res: Response) => {
-  res.send("A good Employyee is backbone of industry 🤗🤗");
+  res.send("A good Employee is backbone of industry 🤗🤗");
 });
 
 app.post("/api/v1/users/logout", (req: Request, res: Response) => {
