@@ -30,4 +30,29 @@ ORDER BY companies.name ASC;
   }
 };
 
-export { employeeDetails };
+const employeeHighestSalary = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const query = `
+  SELECT DISTINCT ON (companies.id) employees.name AS employee_name, employees.salary, companies.name AS company_name
+  FROM employees
+  JOIN companies ON employees.company_id = companies.id
+  ORDER BY companies.id, employees.salary DESC;
+`;
+
+    const result = await pool.query(query);
+
+    if (result.rows.length > 0) {
+      res.status(200).json(result.rows);
+    } else {
+      res.status(404).json({ message: "No employees found" });
+    }
+  } catch (error) {
+    console.error("Error retrieving employee list:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export { employeeDetails, employeeHighestSalary };
