@@ -2,10 +2,11 @@ import { Express, Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { pool } from "../database";
 import generateJWT from "../utils/jwt.util";
+import { v4 as uuidv4 } from "uuid";
 
 // Register logic
 const registerUser = async (req: Request, res: Response) => {
-  const { email, username, password } = req.body;
+  const { username, password } = req.body;
 
   // // Express validations
   // const errors = validationResult(req);
@@ -24,25 +25,24 @@ const registerUser = async (req: Request, res: Response) => {
     // pool;
 
     // First check if user already exists
-    const checkUserQuery =
-      "SELECT  email, username FROM users WHERE email = $1 OR username = $2";
-    const result = await pool.query(checkUserQuery, [email, username]);
+    const checkUserQuery = "SELECT  username FROM users WHERE username = $1";
+    const result = await pool.query(checkUserQuery, [username]);
 
     if (result.rows.length > 0) {
       return res.status(400).json({ message: "User already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10); // Hash the password with a salt round of 10
+    const userId = uuidv4(); // Generate a UUID for the user ID
 
     // Insert new user into the database
     const insertUserQuery = `
-        INSERT INTO users (email, username, password)
+        INSERT INTO users ( id,username, password)
         VALUES ($1, $2, $3)
-        RETURNING password, email, username
+        RETURNING username
       `;
     const newUser = await pool.query(insertUserQuery, [
-      email,
-
+      userId,
       username,
 
       hashedPassword,
@@ -112,4 +112,16 @@ const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-export { registerUser, loginUser };
+// Logout logic
+const logoutUser = async (req: Request, res: Response) => {
+  // Clear the authentication cookies
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+  });
+
+  // Send a response indicating successful logout
+  res.status(200).json({ message: "Logout successful" });
+};
+
+export { registerUser, loginUser, logoutUser };
