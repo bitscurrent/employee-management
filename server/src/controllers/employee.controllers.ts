@@ -3,13 +3,6 @@ import { pool } from "../database";
 
 const employeeDetails = async (req: Request, res: Response): Promise<void> => {
   try {
-    // const query = `
-    //   SELECT *
-    //   FROM employees
-    //   JOIN companies ON employees.company_id = companies.id
-    //   ORDER BY companies.name ASC;
-    // `;
-
     const query = `SELECT employees.name AS employee_name, employees.post, employees.salary,
        companies.name AS company_name, companies.address
 FROM employees
@@ -89,7 +82,7 @@ ORDER BY
     const result = await pool.query(query);
 
     if (result.rows.length > 0) {
-      const { numberOfSalaries, totalSalaries } = result.rows[0];
+      // const { numberOfSalaries, totalSalaries } = result.rows[0];
 
       res.status(200).json({ average_salary: result.rows });
     } else {
